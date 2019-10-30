@@ -59,6 +59,7 @@
 #include "spi.h"
 #include "uart.h"
 #include "timer.h"
+#include "ltdc.h"
 #include "led.h"
 #include "pin.h"
 #include "extint.h"
@@ -476,6 +477,9 @@ void stm32_main(uint32_t reset_mode) {
     #endif
     pendsv_init();
     led_init();
+
+    ltdc_init();
+
     #if MICROPY_HW_HAS_SWITCH
     switch_init0();
     #endif

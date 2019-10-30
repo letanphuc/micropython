@@ -32,6 +32,7 @@ CMSIS_MCU_LOWER = $(shell echo $(CMSIS_MCU) | tr '[:upper:]' '[:lower:]')
 LD_DIR=boards
 CMSIS_DIR=$(TOP)/lib/stm32lib/CMSIS/STM32$(MCU_SERIES_UPPER)xx/Include
 HAL_DIR=lib/stm32lib/STM32$(MCU_SERIES_UPPER)xx_HAL_Driver
+BSP_DIR=$(TOP)/lib/stm32lib/STM32Cube_FW_F7_V1.15.0/Drivers/BSP/STM32746G-Discovery
 USBDEV_DIR=usbdev
 #USBHOST_DIR=usbhost
 FATFS_DIR=lib/oofatfs
@@ -55,6 +56,7 @@ INC += -I$(TOP)
 INC += -I$(BUILD)
 INC += -I$(TOP)/lib/cmsis/inc
 INC += -I$(CMSIS_DIR)/
+INC += -I$(BSP_DIR)/
 INC += -I$(TOP)/$(HAL_DIR)/Inc
 INC += -I$(USBDEV_DIR)/core/inc -I$(USBDEV_DIR)/class/inc
 #INC += -I$(USBHOST_DIR)
@@ -67,14 +69,14 @@ CFLAGS_CORTEX_M = -mthumb
 SUPPORTS_HARDWARE_FP_SINGLE = 0
 SUPPORTS_HARDWARE_FP_DOUBLE = 0
 ifeq ($(CMSIS_MCU),$(filter $(CMSIS_MCU),STM32F765xx STM32F767xx STM32F769xx STM32H743xx))
-CFLAGS_CORTEX_M += -mfpu=fpv5-d16 -mfloat-abi=hard
+CFLAGS_CORTEX_M += -mfpu=fpv5-d16 -mfloat-abi=softfp 
 SUPPORTS_HARDWARE_FP_SINGLE = 1
 SUPPORTS_HARDWARE_FP_DOUBLE = 1
 else
 ifeq ($(MCU_SERIES),$(filter $(MCU_SERIES),f0 l0))
 CFLAGS_CORTEX_M += -msoft-float
 else
-CFLAGS_CORTEX_M += -mfpu=fpv4-sp-d16 -mfloat-abi=hard
+CFLAGS_CORTEX_M += -mfpu=fpv4-sp-d16 -mfloat-abi=softfp 
 SUPPORTS_HARDWARE_FP_SINGLE = 1
 endif
 endif
@@ -255,6 +257,7 @@ SRC_C = \
 	factoryreset.c \
 	timer.c \
 	led.c \
+	ltdc.c \
 	pin.c \
 	pin_defs_stm32.c \
 	pin_named_pins.c \
@@ -348,6 +351,8 @@ SRC_HAL = $(addprefix $(HAL_DIR)/Src/stm32$(MCU_SERIES)xx_,\
 	hal_tim.c \
 	hal_tim_ex.c \
 	hal_uart.c \
+	hal_ltdc.c \
+	hal_ltdc_ex.c \
 	)
 
 ifeq ($(MCU_SERIES),$(filter $(MCU_SERIES),f4 f7 h7 l0 l4 wb))
